@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiểm tra Mật khẩu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+            max-width: 400px;
+        }
+        input[type="password"], input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+        #message {
+            margin-top: 15px;
+            line-height: 1.5;
+        }
+        .error { color: red; }
+        .success { color: green; }
+        .weak { color: #d97706; } /* Màu cam cho mức Yếu */
+        .medium { color: #2563eb; } /* Màu xanh lam cho mức Trung bình */
+        .strong { color: #16a34a; } /* Màu xanh lá cho mức Mạnh */
+    </style>
+</head>
+<body>
+
+    <h2>Kiểm tra Độ mạnh Mật khẩu</h2>
+    <input type="password" id="passwordInput" placeholder="Nhập mật khẩu của bạn...">
+    <br>
+    <button onclick="checkPassword()">Kiểm tra</button>
+
+    <div id="message"></div>
+
+    <script>
+        function checkPassword() {
+            const password = document.getElementById("passwordInput").value;
+            const messageDiv = document.getElementById("message");
+            
+            // Xóa thông báo cũ
+            messageDiv.innerHTML = "";
+            messageDiv.className = "";
+
+            // Mảng lưu trữ các lỗi nếu mật khẩu không đạt yêu cầu
+            let errors = [];
+
+            // Kiểm tra các tiêu chí
+            if (password.length < 8) {
+                errors.push("- Ít nhất 8 ký tự.");
+            }
+            if (!/[A-Z]/.test(password)) {
+                errors.push("- Chứa ít nhất một chữ cái viết hoa (A-Z).");
+            }
+            if (!/[a-z]/.test(password)) {
+                errors.push("- Chứa ít nhất một chữ cái viết thường (a-z).");
+            }
+            if (!/[0-9]/.test(password)) {
+                errors.push("- Chứa ít nhất một chữ số (0-9).");
+            }
+            // Ký tự đặc biệt: Kiểm tra xem có ký tự nào không phải chữ cái và không phải số hay không
+            if (!/[^A-Za-z0-9]/.test(password)) {
+                errors.push("- Chứa ít nhất một ký tự đặc biệt (ví dụ: @, #, $, % ...).");
+            }
+
+            // Xử lý khi mật khẩu không hợp lệ
+            if (errors.length > 0) {
+                messageDiv.className = "error";
+                messageDiv.innerHTML = "<strong>Mật khẩu không hợp lệ. Vui lòng nhập lại, cần bổ sung:</strong><br>" + errors.join("<br>");
+                return; // Dừng hàm tại đây
+            }
+
+            // Xử lý khi mật khẩu hợp lệ và đánh giá độ mạnh
+            let strengthText = "";
+            let strengthClass = "";
+
+            if (password.length === 8) {
+                strengthText = "Yếu (Chỉ vừa đủ 8 ký tự)";
+                strengthClass = "weak";
+            } else if (password.length < 12) {
+                strengthText = "Trung bình (Đáp ứng đủ điều kiện và dưới 12 ký tự)";
+                strengthClass = "medium";
+            } else {
+                strengthText = "Mạnh (Đáp ứng đủ điều kiện và có từ 12 ký tự trở lên)";
+                strengthClass = "strong";
+            }
+
+            // Hiển thị kết quả thành công
+            messageDiv.innerHTML = `<span class="success"><strong>Mật khẩu hợp lệ!</strong></span><br>
+                                    Độ mạnh: <span class="${strengthClass}"><strong>${strengthText}</strong></span>`;
+        }
+    </script>
+
+</body>
+</html>
